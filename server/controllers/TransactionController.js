@@ -1,11 +1,11 @@
-import TransactionDAL from '../db/dal/TransactionDAL';
-import ResponseUtil from '../utils/ResponseUtil';
-import InvalidActionError from '../errors/InvalidActionError';
+import TransactionDAL from "../db/dal/TransactionDAL";
+import ResponseUtil from "../utils/ResponseUtil";
+import InvalidActionError from "../errors/InvalidActionError";
 
 export default class TransactionController {
   static getTransactions(req, res) {
     const transactions = TransactionDAL.getTransactions();
-    ResponseUtil.sendOK(res, 'Transactions Found Successfully', transactions);
+    ResponseUtil.sendOK(res, "Transactions Found Successfully", transactions);
   }
 
   static addTransaction(req, res) {
@@ -13,7 +13,7 @@ export default class TransactionController {
       const createdTransaction = TransactionDAL.addTransaction(req.body);
       ResponseUtil.sendOK(
         res,
-        'Transaction Added Successfully',
+        "Transaction Added Successfully",
         createdTransaction
       );
     } catch (error) {
@@ -25,6 +25,11 @@ export default class TransactionController {
     try {
       const { transactionId } = req.params;
       TransactionDAL.removeTransaction(transactionId);
+      ResponseUtil.sendOK(
+        res,
+        "Transaction Removed Successfully",
+        transactionId
+      );
     } catch (error) {
       throw new InvalidActionError(error.message);
     }
