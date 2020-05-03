@@ -31,10 +31,6 @@ export default class AuthController {
         throw new EntityNotFoundError(message);
       }
       let isValidPwd = PasswordUtil.isValidPassword(password, user.password);
-      console.log(isValidPwd);
-      console.log(password);
-      console.log(user.password);
-
       if (isValidPwd) {
         const token = TokenUtil.generateToken({ username: user.username });
         return ResponseUtil.sendOK(res, "Login Successful", { token });
