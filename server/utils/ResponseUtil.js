@@ -39,4 +39,23 @@ export default class ResponseUtil {
       payload: data,
     });
   }
+  static sendUnauthorized(res, message = "Unauthorize", data = {}) {
+    return res.status(ResponseCodes.UNAUTHORIZED).json({
+      status: ResponseCodes.UNAUTHORIZED,
+      message: message,
+      payload: data,
+    });
+  }
+
+  static sendInternalServerError(
+    res,
+    message = "Internal Server Error",
+    data = {}
+  ) {
+    return res.status(ResponseCodes.INTERNAL_SERVER_ERROR).json({
+      status: ResponseCodes.INTERNAL_SERVER_ERROR,
+      message: message,
+      payload: data,
+    });
+  }
 }

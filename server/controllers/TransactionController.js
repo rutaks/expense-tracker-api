@@ -1,36 +1,49 @@
 import TransactionDAL from "../db/dal/TransactionDAL";
 import ResponseUtil from "../utils/ResponseUtil";
 import InvalidActionError from "../errors/InvalidActionError";
+import ErrorHandler from "../utils/ErrorHandler";
+import User from "../db/models/User";
 
 export default class TransactionController {
-  static getTransactions(req, res) {
-    const transactions = TransactionDAL.getTransactions();
+  static async getTransactions(req, res) {
+    const { username } = req.decoded;
+    const foundUser = await User.findOne({ username: username });
+    const transactions = await TransactionDAL.getTransactions(foundUser.id);
     ResponseUtil.sendOK(res, "Transactions Found Successfully", transactions);
   }
 
-  static addTransaction(req, res) {
+  static async addTransaction(req, res) {
     try {
-      const createdTransaction = TransactionDAL.addTransaction(req.body);
+      const { username } = req.decoded;
+      const foundUser = await User.findOne({ username: username });
+      const createdTransaction = await TransactionDAL.addTransaction(
+        req.body,
+        foundUser.id
+      );
       ResponseUtil.sendOK(
         res,
         "Transaction Added Successfully",
         createdTransaction
       );
     } catch (error) {
+      ErrorHandler.handleError(error, res);
       throw new InvalidActionError(error);
     }
   }
 
-  static removeTransaction(req, res) {
+  static async removeTransaction(req, res) {
     try {
       const { transactionId } = req.params;
-      TransactionDAL.removeTransaction(transactionId);
+      const { username } = req.decoded;
+      const foundUser = await User.findOne({ username: username });
+      await TransactionDAL.removeTransaction(transactionId, foundUser.id);
       ResponseUtil.sendOK(
         res,
         "Transaction Removed Successfully",
         transactionId
       );
     } catch (error) {
+      ErrorHandler.handleError(error, res);
       throw new InvalidActionError(error.message);
     }
   }

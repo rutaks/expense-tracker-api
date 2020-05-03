@@ -5,6 +5,7 @@ import ResponseUtil from "../utils/ResponseUtil";
 import TokenUtil from "../utils/TokenUtil";
 import InvalidActionError from "../errors/InvalidActionError";
 import EntityNotFoundError from "../errors/EntityNotFoundError";
+import ErrorHandler from "../utils/ErrorHandler";
 
 export default class AuthController {
   static async register(req, res) {
@@ -18,6 +19,7 @@ export default class AuthController {
         token,
       });
     } catch (err) {
+      ErrorHandler.handleError(error, res);
       throw new InvalidActionError(error.message);
     }
   }
@@ -37,7 +39,8 @@ export default class AuthController {
       }
       ResponseUtil.sendNotFound(res, "Invalid Credentials");
     } catch (err) {
-      throw err;
+      ErrorHandler.handleError(error, res);
+      throw new InvalidActionError(error.message);
     }
   }
 }

@@ -7,9 +7,11 @@ import DuplicateEntryError from "../errors/DuplicateEntryError";
 import ResponseUtil from "../utils/ResponseUtil";
 
 export default class Validators {
-  static isValidTransaction(req, res, next) {
+  static async isValidTransaction(req, res, next) {
     const { error } = transactionSchema.validate(req.body);
-    if (error) throw new InvalidEntityError(error.details[0].message);
+    if (error) {
+      return ResponseUtil.sendBadRequest(res, error.details[0].message);
+    }
     next();
   }
 
@@ -18,7 +20,7 @@ export default class Validators {
     let errorMessage = "";
     if (error && error.details) errorMessage = error.details[0].message;
     else if (error) errorMessage = error;
-    if (error) throw new InvalidEntityError(errorMessage);
+    if (error) return ResponseUtil.sendBadRequest(res, errorMessage);
     next();
   }
 
@@ -27,7 +29,7 @@ export default class Validators {
     let errorMessage = "";
     if (error && error.details) errorMessage = error.details[0].message;
     else if (error) errorMessage = error;
-    if (error) throw new InvalidEntityError(errorMessage);
+    if (error) return ResponseUtil.sendBadRequest(res, errorMessage);
     next();
   }
 
