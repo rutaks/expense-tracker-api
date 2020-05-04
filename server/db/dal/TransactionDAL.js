@@ -1,28 +1,43 @@
-import EntityNotFoundError from '../../errors/EntityNotFoundError';
+import EntityNotFoundError from "../../errors/EntityNotFoundError";
+import Transaction from "../models/Transaction";
 
-const transactions = [{ id: 1, name: 'Pizza', createdOn: new Date() }];
+let transactions = [
+  {
+    id: 1,
+    description: "Pizza",
+    amount: -2000,
+    currency: "RWF",
+    date: new Date(),
+  },
+];
 export default class TransactionDAL {
-  static addTransaction(transaction) {
-    transaction.createdOn = new Date();
-    transactions.push(transaction);
+  static async addTransaction(trans, userOwnerId) {
+    trans.userOwner = userOwnerId;
+    const transaction = new Transaction(trans);
+    await transaction.save();
     return transaction;
   }
 
-  static removeTransaction(transactionId) {
-    const _ = getTransactionsById(transactionId);
-    transactions = transactions.filter(
-      (transaction) => transaction.id !== transactionId
-    );
+  static async removeTransaction(transactionId = "", userOwnerId) {
+    const foundTransaction = await Transaction.findOne({
+      _id: transactionId,
+      userOwner: userOwnerId,
+    });
+    if (!foundTransaction) {
+      throw new EntityNotFoundError("No Transaction Found");
+    }
+    await Transaction.findOneAndDelete({ _id: transactionId });
   }
 
-  static getTransactions() {
+  static async getTransactions(userOwnerId) {
+    const transactions = await Transaction.find({ userOwner: userOwnerId });
     return transactions;
   }
 
   static getTransactionsById(transactionId) {
     for (let i = 0; i < transactions.length; i++) {
-      if (transactions[i].id === transactionId) return transactions[i];
+      if (transactions[i].id == transactionId) return transactions[i];
     }
-    throw new EntityNotFoundError('No Transaction Found');
+    throw new EntityNotFoundError("No Transaction Found");
   }
 }
