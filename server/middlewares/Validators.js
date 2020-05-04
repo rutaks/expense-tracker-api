@@ -9,7 +9,7 @@ import ResponseUtil from "../utils/ResponseUtil";
 export default class Validators {
   static async isValidTransaction(req, res, next) {
     const { error } = transactionSchema.validate(req.body);
-    if (error) {
+    if (typeof error !== "undefined") {
       return ResponseUtil.sendBadRequest(res, error.details[0].message);
     }
     next();
@@ -18,18 +18,24 @@ export default class Validators {
   static isValidUser(req, res, next) {
     const { error } = userSchema.validate(req.body);
     let errorMessage = "";
-    if (error && error.details) errorMessage = error.details[0].message;
-    else if (error) errorMessage = error;
-    if (error) return ResponseUtil.sendBadRequest(res, errorMessage);
+    if (typeof error !== "undefined") {
+      if (error.details) {
+        errorMessage = error.details[0].message;
+      } else errorMessage = error.message;
+      return ResponseUtil.sendBadRequest(res, errorMessage);
+    }
     next();
   }
 
   static isValidAccount(req, res, next) {
     const { error } = loginSchema.validate(req.body);
     let errorMessage = "";
-    if (error && error.details) errorMessage = error.details[0].message;
-    else if (error) errorMessage = error;
-    if (error) return ResponseUtil.sendBadRequest(res, errorMessage);
+    if (typeof error !== "undefined") {
+      if (error.details) {
+        errorMessage = error.details[0].message;
+      } else errorMessage = error.message;
+      return ResponseUtil.sendBadRequest(res, errorMessage);
+    }
     next();
   }
 

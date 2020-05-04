@@ -30,7 +30,7 @@ export default class AuthController {
       let user = await User.findOne({ username });
       if (!user) {
         const message = `User with username ${username} not found`;
-        throw new EntityNotFoundError(message);
+        return ResponseUtil.sendNotFound(res, message);
       }
       let isValidPwd = PasswordUtil.isValidPassword(password, user.password);
       if (isValidPwd) {

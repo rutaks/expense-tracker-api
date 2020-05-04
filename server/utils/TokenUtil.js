@@ -23,6 +23,8 @@ export default class TokenUtil {
     } else {
       token = req;
     }
+    console.log("TEST - ", req);
+
     if (!token) return false;
     if (!token.startsWith("Bearer ")) return false;
     return true;

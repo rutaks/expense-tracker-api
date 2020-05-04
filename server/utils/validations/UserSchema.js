@@ -3,7 +3,7 @@ import Joi from "@hapi/joi";
 const userSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
-  dob: Joi.date().required(),
+  dob: Joi.date().allow(""),
   gender: Joi.string().required(),
   username: Joi.string().required(),
   password: Joi.string()
